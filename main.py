@@ -4,6 +4,7 @@ from pathlib import Path
 import time
 import os
 from dotenv import load_dotenv # type: ignore
+from app.utils import is_extension_valid, extract_client
 
 load_dotenv()
 
@@ -11,9 +12,12 @@ tracked_dir = Path(os.getenv("CLIENTS_DIR", "clients/"))
 
 class FileHandler(FileSystemEventHandler):
     def on_created(self, event):
+        trace = Path(event.src_path)
         if not event.is_directory:
-            trace = Path(event.src_path)
-            print(f"File detected: {event.src_path}")
+            client = extract_client(trace)
+            print("New file detected:", trace, "Client:", client)
+        else:
+            print("Directory ignored, invalid file type:", trace)
 
 if __name__ == "__main__":
     observer = Observer()
