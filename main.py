@@ -12,12 +12,19 @@ tracked_dir = Path(os.getenv("CLIENTS_DIR", "clients/"))
 
 class FileHandler(FileSystemEventHandler):
     def on_created(self, event):
-        trace = Path(event.src_path)
+        """
+        Handle the creation of a new file in the tracked directory.
+        """
+
+        # TODO: ------------------ Tentar melhorar a parte do extract_client() ---------------------------
+
         if not event.is_directory:
-            client = extract_client(trace)
-            print("New file detected:", trace, "Client:", client)
-        else:
-            print("Directory ignored, invalid file type:", trace)
+            trace = Path(event.src_path)
+            if is_extension_valid(trace):    
+                    client = extract_client(trace)
+                    print("New file detected:", trace, "Client:", client)
+            else:
+                    print("Directory ignored, invalid file type:", trace)
 
 if __name__ == "__main__":
     observer = Observer()
